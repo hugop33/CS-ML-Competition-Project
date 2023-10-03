@@ -1,0 +1,13 @@
+# VSCode
+./vscode/
+
+# data
+*.csv
+*.png
+*.jpg
+
+# pycache
+__pycache__/
+
+# ipython
+.ipynb_checkpoints/

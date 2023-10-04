@@ -11,3 +11,13 @@ __pycache__/
 
 # ipython
 .ipynb_checkpoints/
+
+
+# model weights (torch, sklearn, etc.)
+*.pt
+*.pth
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+*.joblib

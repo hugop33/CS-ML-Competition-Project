@@ -1,4 +1,4 @@
-gares = {
+GARES = {
     "BORDEAUX ST JEAN": {
         "region": "NOUVELLE AQUITAINE",
         "departement": "GIRONDE"
@@ -239,7 +239,8 @@ gares = {
 
 
 def gare_departement(gare):
-    return gares[gare]["departement"]
+    return GARES[gare]["departement"]
+
 
 def gare_region(gare):
-    return gares[gare]["region"]
+    return GARES[gare]["region"]

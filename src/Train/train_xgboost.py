@@ -16,7 +16,7 @@ def load_data(csv_name):
 def main():
     # Chargement des données
     df = load_data(DATA_FILENAME)
-    df = date_to_float_col(df, replace=True)
+    df = date_to_float_col(df, replace=False)
     df["depart_region"] = df["gare_depart"].apply(gare_region)
     df["arrivee_region"] = df["gare_arrivee"].apply(gare_region)
     df["depart_departement"] = df["gare_depart"].apply(gare_departement)
@@ -32,7 +32,7 @@ def main():
 
     # df["duree_moyenne"] = df["duree_moyenne"]-df["retard_moyen_arrivee"]x
 
-    xcols = ["duree_moyenne", "nb_train_prevu", "annee", "mois"]
+    xcols = ["duree_moyenne", "nb_train_prevu", "annee", "mois", "date"]
 
     xcols_to_keep = [c for c in df.columns if c in xcols or c.startswith(
         ("depart_region", "arrivee_region", "depart_departement", "arrivee_departement", "service"))]
@@ -40,17 +40,10 @@ def main():
 
     df = df[xcols_to_keep+ycols]
 
-    df_train = df.where(df["annee"] < 2023)
-    df_test = df.where(df["annee"] >= 2023)
-
-    y_train = df[ycols]
-    X_train = df[xcols_to_keep]
-
-    y_test = df[ycols]
-    X_test = df[xcols_to_keep]
+    X_train, y_train, X_test, y_test = train_test(df)
 
     xgb = XGBRegressor(
-        n_estimators=1000,
+        n_estimators=200,
         verbosity=2
     )
 
@@ -58,6 +51,8 @@ def main():
 
     score = xgb.score(X_train, y_train)
     print("Trainging score:", score)
+    test_score = xgb.score(X_test, y_test)
+    print("Test score :", test_score)
 
     y_pred = xgb.predict(X_test)
     mse = mean_squared_error(y_test, y_pred)

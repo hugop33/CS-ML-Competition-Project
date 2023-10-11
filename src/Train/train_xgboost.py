@@ -50,7 +50,7 @@ def main():
     X_test = df[xcols_to_keep]
 
     xgb = XGBRegressor(
-        n_estimators=100,
+        n_estimators=1000,
         verbosity=2
     )
 

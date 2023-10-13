@@ -25,7 +25,7 @@ def scale(X_train: pd.DataFrame, y_train: pd.DataFrame, X_test: pd.DataFrame, y_
     return X_train, y_train, X_test, y_test
 
 
-def data_pipeline(csv_name):
+def data_pipeline(csv_name, scaler="minmax"):
     csv_path = os.path.join(DATA_FOLDER, csv_name)
     df = pd.read_csv(csv_path, sep=';')
     df = date_to_float_col(df, replace=False)
@@ -53,6 +53,6 @@ def data_pipeline(csv_name):
     df = df[xcols_to_keep+ycols]
 
     X_train, y_train, X_test, y_test = train_test(df)
-    scaled = scale(X_train, y_train, X_test, y_test)
+    scaled = scale(X_train, y_train, X_test, y_test, scaler=scaler)
 
     return scaled

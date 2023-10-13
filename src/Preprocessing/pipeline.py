@@ -35,7 +35,7 @@ def data_pipeline(csv_name, scaler="minmax"):
     df["arrivee_departement"] = df["gare_arrivee"].apply(gare_departement)
 
     df["distances_km"] = df.apply(
-        lambda row: distance_intergares(row["gare_depart"], row["gare_arrivee"]), axis=1)
+        lambda row: distance_intergares(CITY_PATH, row["gare_depart"], row["gare_arrivee"]), axis=1)
     # Remove gare_arrivee, gare_depart
     df = df.drop(labels=["gare_arrivee", "gare_depart"], axis=1)
     # One hot encoding

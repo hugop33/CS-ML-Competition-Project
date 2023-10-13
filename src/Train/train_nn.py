@@ -21,7 +21,7 @@ class TGVDataset(Dataset):
     def __init__(self, filename, train=True):
         super().__init__()
         self.X_train, self.y_train, self.X_test, self.y_test = data_pipeline(
-            filename, scaler="minmax")
+            filename, scaler="standard")
         self.X_train, self.y_train, self.X_test, self.y_test = torch.Tensor(self.X_train), torch.Tensor(
             self.y_train), torch.Tensor(self.X_test), torch.Tensor(self.y_test)
         self.is_train = train

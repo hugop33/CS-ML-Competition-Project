@@ -10,53 +10,6 @@ from src.Preprocessing import *
 from config import *
 
 
-def scale(X_train: pd.DataFrame, y_train: pd.DataFrame, X_test: pd.DataFrame, y_test: pd.DataFrame):
-    # Xscaler = MinMaxScaler()
-    # yscaler = MinMaxScaler()
-    Xscaler = StandardScaler()
-    yscaler = StandardScaler()
-    X_train = Xscaler.fit_transform(X_train)
-    X_test = Xscaler.transform(X_test)
-    y_train, y_test = y_train.values.reshape(-1,
-                                             1), y_test.values.reshape(-1, 1)
-    y_train = yscaler.fit_transform(y_train)
-    y_test = yscaler.transform(y_test)
-    return X_train, y_train, X_test, y_test
-
-
-def load_data(csv_name):
-    csv_path = os.path.join(DATA_FOLDER, csv_name)
-    df = pd.read_csv(csv_path, sep=';')
-    df = date_to_float_col(df, replace=False)
-    df["depart_region"] = df["gare_depart"].apply(gare_region)
-    df["arrivee_region"] = df["gare_arrivee"].apply(gare_region)
-    df["depart_departement"] = df["gare_depart"].apply(gare_departement)
-    df["arrivee_departement"] = df["gare_arrivee"].apply(gare_departement)
-    # Remove gare_arrivee, gare_depart
-    df = df.drop(labels=["gare_arrivee", "gare_depart"], axis=1)
-    # One hot encoding
-    df = oneHotEncoding(df, "depart_region")
-    df = oneHotEncoding(df, "arrivee_region")
-    df = oneHotEncoding(df, "depart_departement")
-    df = oneHotEncoding(df, "arrivee_departement")
-    df = oneHotEncoding(df, "service")
-
-    # df["duree_moyenne"] = df["duree_moyenne"]-df["retard_moyen_arrivee"]x
-
-    xcols = ["duree_moyenne", "nb_train_prevu", "annee", "mois", "date"]
-
-    xcols_to_keep = [c for c in df.columns if c in xcols or c.startswith(
-        ("depart_region", "arrivee_region", "depart_departement", "arrivee_departement", "service"))]
-    ycols = ["retard_moyen_arrivee"]
-
-    df = df[xcols_to_keep+ycols]
-
-    X_train, y_train, X_test, y_test = train_test(df)
-    scaled = scale(X_train, y_train, X_test, y_test)
-
-    return scaled
-
-
 def train(X_train, y_train, X_test, y_test, **kwargs):
     lgb = LGBMRegressor(
         **kwargs
@@ -99,7 +52,7 @@ def grid_search(X_train, y_train, **grid):
 
 def main():
     # Chargement des données
-    X_train, y_train, X_test, y_test = load_data(DATA_FILENAME)
+    X_train, y_train, X_test, y_test = data_pipeline(DATA_FILENAME)
 
     lgb = train(X_train, y_train, X_test, y_test,
                 n_estimators=10000,

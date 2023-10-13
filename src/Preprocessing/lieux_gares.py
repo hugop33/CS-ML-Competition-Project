@@ -1,3 +1,7 @@
+from config import CITY_PATH
+import pandas as pd
+from geopy.distance import geodesic
+
 GARES = {
     "BORDEAUX ST JEAN": {
         "region": "NOUVELLE AQUITAINE",
@@ -244,3 +248,31 @@ def gare_departement(gare):
 
 def gare_region(gare):
     return GARES[gare]["region"]
+
+
+def city_name(gare_name):
+    i = 0
+    thresh = 4
+    city = ""
+    names = gare_name.lower().split(" ")
+    while len(city) < thresh:
+        city += names[i]
+        i += 1
+    return city
+
+
+def distance_intergares(city_csv_path, gare1, gare2):
+    city_df = pd.read_csv(city_csv_path, sep=",")
+    city1 = city_name(gare1)
+    city2 = city_name(gare2)
+    # city1_df est le df avec les villes qui contiennent le nom city1
+    city1_df = city_df[city_df["city"].str.contains(city1)]
+    # city2_df est le df avec les villes qui contiennent le nom city2
+    city2_df = city_df[city_df["city"].str.contains(city2)]
+
+    lat1, long1 = city1_df["latitude"].values.mean(
+    ), city1_df["longitude"].values.mean()
+    lat2, long2 = city2_df["latitude"].values.mean(
+    ), city2_df["longitude"].values.mean()
+
+    return geodesic((lat1, long1), (lat2, long2)).km

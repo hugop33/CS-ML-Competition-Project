@@ -4,9 +4,22 @@ import pandas as pd
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 from sklearn.model_selection import GridSearchCV
+from sklearn.preprocessing import MinMaxScaler
 
 from src.Preprocessing import *
 from config import *
+
+
+def scale(X_train: pd.DataFrame, y_train: pd.DataFrame, X_test: pd.DataFrame, y_test: pd.DataFrame):
+    Xscaler = MinMaxScaler()
+    yscaler = MinMaxScaler()
+    X_train = Xscaler.fit_transform(X_train)
+    X_test = Xscaler.transform(X_test)
+    y_train, y_test = y_train.values.reshape(-1,
+                                             1), y_test.values.reshape(-1, 1)
+    y_train = yscaler.fit_transform(y_train)
+    y_test = yscaler.transform(y_test)
+    return X_train, y_train, X_test, y_test
 
 
 def load_data(csv_name):
@@ -38,7 +51,7 @@ def load_data(csv_name):
 
     X_train, y_train, X_test, y_test = train_test(df)
 
-    return X_train, y_train, X_test, y_test
+    return scale(X_train, y_train, X_test, y_test)
 
 
 def train(X_train, y_train, X_test, y_test, **kwargs):

@@ -266,9 +266,9 @@ def distance_intergares(city_csv_path, gare1, gare2):
     city1 = city_name(gare1)
     city2 = city_name(gare2)
     # city1_df est le df avec les villes qui contiennent le nom city1
-    city1_df = city_df[city_df["city"].str.contains(city1)]
+    city1_df = city_df[city_df["label"].str.contains(city1)]
     # city2_df est le df avec les villes qui contiennent le nom city2
-    city2_df = city_df[city_df["city"].str.contains(city2)]
+    city2_df = city_df[city_df["label"].str.contains(city2)]
 
     lat1, long1 = city1_df["latitude"].values.mean(
     ), city1_df["longitude"].values.mean()

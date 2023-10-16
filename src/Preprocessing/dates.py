@@ -17,12 +17,12 @@ def date_to_float_col(df: pd.DataFrame, replace = False):
     list_month = [date[k][1] for k in range(len(date))]
 
     df_date = pd.DataFrame({
-        'annee' : list_year,
-        'mois' : list_month,
+        'annee': list_year,
+        'mois': list_month,
     }).astype(float)
 
-    df = pd.concat([df, df_date], axis = 1)
+    df = pd.concat([df, df_date], axis=1)
     if replace:
-        df = df.drop(labels=['date'], axis = 1)
+        df = df.drop(labels=['date'], axis=1)
 
     return df

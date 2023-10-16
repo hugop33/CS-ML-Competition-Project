@@ -11,7 +11,7 @@ def date_to_float_col(df: pd.DataFrame, replace = False):
     assert 'date' in df.columns
 
     date = df["date"].copy()
-    date = date.str.plit('-')
+    date = date.str.split('-')
 
     list_year = [date[k][0] for k in range(len(date))]
     list_month = [date[k][1] for k in range(len(date))]

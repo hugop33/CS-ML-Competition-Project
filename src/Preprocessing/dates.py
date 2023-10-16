@@ -1,4 +1,6 @@
+import numpy as np
 import pandas as pd
+
 
 def date_to_float_col(df: pd.DataFrame, replace = False):
     '''

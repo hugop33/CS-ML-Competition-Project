@@ -1,33 +1,33 @@
-from xgboost import XGBRegressor
+from lightgbm import LGBMRegressor, early_stopping
 import os
 import pandas as pd
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 from sklearn.model_selection import GridSearchCV
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 from src.Preprocessing import *
 from config import *
 
 
 def train(X_train, y_train, X_test, y_test, **kwargs):
-    xgb = XGBRegressor(
+    lgb = LGBMRegressor(
         **kwargs,
         random_state=42
     )
 
-    xgb.fit(X_train, y_train, early_stopping_rounds=100,
+    lgb.fit(X_train, y_train,
             eval_set=[(X_train, y_train), (X_test, y_test)
-                      ],
+                      ], callbacks=[early_stopping(stopping_rounds=100)]
             )
-    score = xgb.score(X_train, y_train)
+    score = lgb.score(X_train, y_train)
     print("Training score :", score)
-    return xgb
+    return lgb
 
 
-def plot_test(xgb, X_test, y_test):
-    y_pred = xgb.predict(X_test)
-    score = xgb.score(X_test, y_test)
+def plot_test(lgb, X_test, y_test):
+    y_pred = lgb.predict(X_test)
+    score = lgb.score(X_test, y_test)
     print("Test score :", score)
 
     mse = mean_squared_error(y_test, y_pred)
@@ -43,7 +43,7 @@ def plot_test(xgb, X_test, y_test):
 
 def grid_search(X_train, y_train, **grid):
     gs_cv = GridSearchCV(
-        XGBRegressor(), grid, cv=5, refit=True, verbose=2
+        LGBMRegressor(), grid, cv=5, refit=True, verbose=2
     )
     gs_cv.fit(X_train, y_train)
     print(gs_cv.best_params_)
@@ -55,11 +55,11 @@ def main():
     # Chargement des données
     X_train, y_train, X_test, y_test = data_pipeline(DATA_FILENAME)
 
-    xgb = train(X_train, y_train, X_test, y_test,
+    lgb = train(X_train, y_train, X_test, y_test,
                 n_estimators=10000,
-                max_depth=3,
                 learning_rate=0.01,
-                verbosity=2
+                num_leaves=20,
+                verbosity=1
                 )
     # grid = {"n_estimators": [500, 1000, 1500],
     #         "max_depth": [1, 3, 5, 10],
@@ -69,7 +69,7 @@ def main():
     #                   **grid
     #                   )
 
-    plot_test(xgb, X_test, y_test)
+    plot_test(lgb, X_test, y_test)
 
 
 if __name__ == "__main__":

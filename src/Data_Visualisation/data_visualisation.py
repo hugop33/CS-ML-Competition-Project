@@ -31,4 +31,4 @@ def analyse_annulations(fichier_csv):
     plt.show()
 
 # Utilisez la fonction
-analyse_annulations("C:\Users\Dan\Downloads\regularite-mensuelle-tgv-aqst.csv")
+analyse_annulations("C:/Users/Dan/Downloads/aregularite-mensuelle-tgv-aqst.csv")

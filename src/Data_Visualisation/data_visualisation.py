@@ -49,4 +49,5 @@ def ratio_annulations_mensuel(fichier_csv):
     plt.show()
 
 if __name__ == "__main__":
+    nombre_annulations_mensuel("C:/Users/Dan/Downloads/aregularite-mensuelle-tgv-aqst.csv")
     ratio_annulations_mensuel("C:/Users/Dan/Downloads/aregularite-mensuelle-tgv-aqst.csv")

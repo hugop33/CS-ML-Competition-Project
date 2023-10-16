@@ -88,6 +88,15 @@ def data_pipeline_1(csv_name, scaler="minmax"):
     return scaled
 
 
+def data_pipeline_2(csv_name, scaler="minmax"):
+    csv_path = os.path.join(DATA_FOLDER, csv_name)
+    df = pd.read_csv(csv_path, sep=';')
+    X_train, y_train, X_test, y_test = data_pipeline_1(csv_name,scaler)
+    X_train["retard_predit"] = X_train.apply(lasso)
+    X_train["retard_predit"] = X_test.apply(lasso)
+    return 
+
+
 if __name__ == "__main__":
     X_train, y_train, X_test, y_test = data_pipeline_1(DATA_FILENAME)
     print("training shape", X_train.shape)

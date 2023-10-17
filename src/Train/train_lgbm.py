@@ -25,6 +25,10 @@ def train(X_train, y_train, X_test, y_test, **kwargs):
     return lgb
 
 
+def lgbm_predict(model, X_test):
+    return model.predict(X_test)
+
+
 def plot_test(lgb, X_test, y_test):
     y_pred = lgb.predict(X_test)
     score = lgb.score(X_test, y_test)
@@ -36,7 +40,7 @@ def plot_test(lgb, X_test, y_test):
     x_ax = range(len(y_test))
     plt.plot(x_ax, y_test, label="original")
     plt.plot(x_ax, y_pred, label="predicted")
-    plt.title("Boston test and predicted data")
+    plt.title("Predicted and target data for test instances")
     plt.legend()
     plt.show()
 
@@ -58,18 +62,19 @@ def main():
     lgb = train(X_train, y_train, X_test, y_test,
                 n_estimators=10000,
                 learning_rate=0.01,
-                num_leaves=20,
+                max_depth=2,
                 verbosity=1
                 )
-    # grid = {"n_estimators": [500, 1000, 1500],
+    # grid = {"n_estimators": [1000, 1500, 2000],
     #         "max_depth": [1, 3, 5, 10],
-    #         "learning_rate": [0.01],
-    #         "verbosity": [1]}
-    # xgb = grid_search(X_train, y_train,
+    #         "learning_rate": [0.001, 0.01, 0.05],
+    #         "verbosity": [0]}
+    # lgb = grid_search(X_train, y_train,
     #                   **grid
     #                   )
-    feature_importances = lgb.feature_importances_
-    print("Feature importances :", feature_importances)
+    feature_importances = pd.DataFrame(
+        lgb.feature_importances_, index=X_train.columns, columns=['importance']).sort_values('importance', ascending=False)
+    print(feature_importances)
 
     plot_test(lgb, X_test, y_test)
 

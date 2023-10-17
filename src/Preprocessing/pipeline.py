@@ -1,10 +1,9 @@
 import os
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 import pandas as pd
-from src.Train import *
 from config import *
 from .dates import date_to_float_col
-from .train_test_split import train_test,train_test2
+from .train_test_split import train_test, train_test2
 from .one_hot_encoding import oneHotEncoding
 from .lieux_gares import *
 from .history_inference import infer_annulations
@@ -32,18 +31,25 @@ def scale(X_train: pd.DataFrame, y_train: pd.DataFrame, X_test: pd.DataFrame, y_
     elif scaler == "standard":
         Xscaler = StandardScaler()
         yscaler = StandardScaler()
-    X_cols, y_cols = X_train.columns, y_train.columns
+    X_cols, y_cols = X_train.columns, y_train.name if isinstance(
+        y_train, pd.Series) else y_train.columns
     X_train = Xscaler.fit_transform(X_train)
     X_test = Xscaler.transform(X_test)
-    y_train, y_test = y_train.values.reshape(-1,
-                                             1), y_test.values.reshape(-1, 1)
+
+    if isinstance(y_train, pd.Series):
+        y_train, y_test = y_train.values.reshape(-1,
+                                                 1), y_test.values.reshape(-1, 1)
     y_train = yscaler.fit_transform(y_train)
     y_test = yscaler.transform(y_test)
 
     X_train = pd.DataFrame(X_train, columns=X_cols)
     X_test = pd.DataFrame(X_test, columns=X_cols)
-    y_train = pd.DataFrame(y_train, columns=y_cols)
-    y_test = pd.DataFrame(y_test, columns=y_cols)
+    if y_train.shape[1] == 1:
+        y_train = pd.Series(y_train.flatten(), name=y_cols)
+        y_test = pd.Series(y_test.flatten(), name=y_cols)
+    else:
+        y_train = pd.DataFrame(y_train, columns=y_cols)
+        y_test = pd.DataFrame(y_test, columns=y_cols)
     return X_train, y_train, X_test, y_test
 
 
@@ -88,18 +94,18 @@ def data_pipeline_1(csv_name, scaler="minmax"):
     return scaled
 
 
-def data_pipeline_2(csv_name, scaler="minmax"):
+def data_pipeline_2(csv_name, predictor, scaler="minmax"):
     csv_path = os.path.join(DATA_FOLDER, csv_name)
     df = pd.read_csv(csv_path, sep=';')
-    X_train, y_train, X_test, y_test = data_pipeline_1(csv_name,scaler)
-    X_train["retard_predit"] = X_train.apply(lasso)
-    X_test["retard_predit"] = X_test.apply(lasso)
-    y_train,y_test=train_test2(df)
+    X_train, y_train, X_test, y_test = data_pipeline_1(csv_name, scaler)
+    X_train["retard_predit"] = predictor(X_train)
+    X_test["retard_predit"] = predictor(X_test)
+    y_train, y_test = train_test2(df)
     scaled = scale(X_train, y_train, X_test, y_test, scaler=scaler)
     return scaled
 
 
 if __name__ == "__main__":
+
     X_train, y_train, X_test, y_test = data_pipeline_1(DATA_FILENAME)
-    X_train, y_train, X_test, y_test = data_pipeline_2(DATA_FILENAME)
     print("training shape", X_train.shape)

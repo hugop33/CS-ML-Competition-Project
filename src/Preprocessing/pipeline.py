@@ -34,10 +34,13 @@ def data_pipeline(csv_name, scaler="minmax"):
     df["depart_departement"] = df["gare_depart"].apply(gare_departement)
     df["arrivee_departement"] = df["gare_arrivee"].apply(gare_departement)
 
-    df["distances_km"] = df.apply(
-        lambda row: distance_intergares(CITY_PATH, row["gare_depart"], row["gare_arrivee"]), axis=1)
+    df["cities"] = df["gare_depart"] + df["gare_arrivee"].apply(
+        lambda x: "|" + x)
+    distance_mapping = distance_map(STATIONS_PATH, df["cities"].unique())
+    df["distances_km"] = df["cities"].apply(
+        lambda x: distance_mapping[(x.split("|")[0], x.split("|")[1])])
     # Remove gare_arrivee, gare_depart
-    df = df.drop(labels=["gare_arrivee", "gare_depart"], axis=1)
+    df = df.drop(labels=["gare_arrivee", "gare_depart", "cities"], axis=1)
     # One hot encoding
     df = oneHotEncoding(df, "depart_region")
     df = oneHotEncoding(df, "arrivee_region")
@@ -60,3 +63,8 @@ def data_pipeline(csv_name, scaler="minmax"):
     scaled = scale(X_train, y_train, X_test, y_test, scaler=scaler)
 
     return scaled
+
+
+if __name__ == "__main__":
+    data = data_pipeline(DATA_FILENAME)
+    print("training shape", data[0].shape)

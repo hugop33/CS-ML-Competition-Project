@@ -68,6 +68,8 @@ def main():
     # xgb = grid_search(X_train, y_train,
     #                   **grid
     #                   )
+    feature_importances = lgb.feature_importances_
+    print("Feature importances :", feature_importances)
 
     plot_test(lgb, X_test, y_test)
 

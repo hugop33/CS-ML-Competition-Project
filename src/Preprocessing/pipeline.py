@@ -11,22 +11,43 @@ from .history_inference import infer_annulations
 
 
 def scale(X_train: pd.DataFrame, y_train: pd.DataFrame, X_test: pd.DataFrame, y_test: pd.DataFrame, scaler: str = "minmax"):
+    """
+    Scales the data using either MinMaxScaler or StandardScaler
+
+    Input:
+        - X_train: training data
+        - y_train: training target
+        - X_test: testing data
+        - y_test: testing target
+        - scaler: either "minmax" or "standard"
+    Output:
+        - X_train: scaled training data, pd.DataFrame
+        - y_train: scaled training target, pd.DataFrame
+        - X_test: scaled testing data, pd.DataFrame
+        - y_test: scaled testing target, pd.DataFrame
+    """
     if scaler == "minmax":
         Xscaler = MinMaxScaler()
         yscaler = MinMaxScaler()
     elif scaler == "standard":
         Xscaler = StandardScaler()
         yscaler = StandardScaler()
+    X_cols, y_cols = X_train.columns, y_train.columns
     X_train = Xscaler.fit_transform(X_train)
     X_test = Xscaler.transform(X_test)
     y_train, y_test = y_train.values.reshape(-1,
                                              1), y_test.values.reshape(-1, 1)
     y_train = yscaler.fit_transform(y_train)
     y_test = yscaler.transform(y_test)
+
+    X_train = pd.DataFrame(X_train, columns=X_cols)
+    X_test = pd.DataFrame(X_test, columns=X_cols)
+    y_train = pd.DataFrame(y_train, columns=y_cols)
+    y_test = pd.DataFrame(y_test, columns=y_cols)
     return X_train, y_train, X_test, y_test
 
 
-def data_pipeline(csv_name, scaler="minmax"):
+def data_pipeline_1(csv_name, scaler="minmax"):
     csv_path = os.path.join(DATA_FOLDER, csv_name)
     df = pd.read_csv(csv_path, sep=';')
     df = date_to_float_col(df, replace=False)
@@ -68,5 +89,5 @@ def data_pipeline(csv_name, scaler="minmax"):
 
 
 if __name__ == "__main__":
-    X_train, y_train, X_test, y_test = data_pipeline(DATA_FILENAME)
+    X_train, y_train, X_test, y_test = data_pipeline_1(DATA_FILENAME)
     print("training shape", X_train.shape)

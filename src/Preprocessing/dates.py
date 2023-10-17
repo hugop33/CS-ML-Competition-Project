@@ -1,7 +1,8 @@
+import numpy as np
 import pandas as pd
 
 
-def date_to_float_col(df: pd.DataFrame, replace=False):
+def date_to_float_col(df: pd.DataFrame, replace = False):
     '''
     Prend en entrée un dataframe contenant une colonne 'date' au format 'yyyy-mm'
     Ajoute deux colonnes 'annee' et 'mois' contenant les valeurs correspondantes et converties en float

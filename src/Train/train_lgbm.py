@@ -12,7 +12,8 @@ from config import *
 
 def train(X_train, y_train, X_test, y_test, **kwargs):
     lgb = LGBMRegressor(
-        **kwargs
+        **kwargs,
+        random_state=42
     )
 
     lgb.fit(X_train, y_train,

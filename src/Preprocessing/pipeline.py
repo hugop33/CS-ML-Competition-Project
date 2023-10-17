@@ -7,6 +7,7 @@ from .dates import date_to_float_col
 from .train_test_split import train_test
 from .one_hot_encoding import oneHotEncoding
 from .lieux_gares import *
+from .history_inference import infer_annulations
 
 
 def scale(X_train: pd.DataFrame, y_train: pd.DataFrame, X_test: pd.DataFrame, y_test: pd.DataFrame, scaler: str = "minmax"):
@@ -29,6 +30,7 @@ def data_pipeline(csv_name, scaler="minmax"):
     csv_path = os.path.join(DATA_FOLDER, csv_name)
     df = pd.read_csv(csv_path, sep=';')
     df = date_to_float_col(df, replace=False)
+    df = infer_annulations(df)
     df["depart_region"] = df["gare_depart"].apply(gare_region)
     df["arrivee_region"] = df["gare_arrivee"].apply(gare_region)
     df["depart_departement"] = df["gare_depart"].apply(gare_departement)
@@ -51,7 +53,7 @@ def data_pipeline(csv_name, scaler="minmax"):
     # df["duree_moyenne"] = df["duree_moyenne"]-df["retard_moyen_arrivee"]x
 
     xcols = ["duree_moyenne", "nb_train_prevu",
-             "annee", "mois", "date", "distances_km"]
+             "annee", "mois", "date", "distances_km", "annulations_mois"]
 
     xcols_to_keep = [c for c in df.columns if c in xcols or c.startswith(
         ("depart_region", "arrivee_region", "depart_departement", "arrivee_departement", "service"))]
@@ -66,5 +68,5 @@ def data_pipeline(csv_name, scaler="minmax"):
 
 
 if __name__ == "__main__":
-    data = data_pipeline(DATA_FILENAME)
-    print("training shape", data[0].shape)
+    X_train, y_train, X_test, y_test = data_pipeline(DATA_FILENAME)
+    print("training shape", X_train.shape)

@@ -20,8 +20,8 @@ from config import *
 class TGVDataset(Dataset):
     def __init__(self, filename, train=True):
         super().__init__()
-        self.X_train, self.y_train, self.X_test, self.y_test = load_data(
-            filename)
+        self.X_train, self.y_train, self.X_test, self.y_test = data_pipeline(
+            filename, scaler="standard")
         self.X_train, self.y_train, self.X_test, self.y_test = torch.Tensor(self.X_train), torch.Tensor(
             self.y_train), torch.Tensor(self.X_test), torch.Tensor(self.y_test)
         self.is_train = train
@@ -58,55 +58,9 @@ class DenseNN(Module):
         ti.summary(self, (1, self.sizes[0]), device='cpu')
 
 
-def scale(X_train: pd.DataFrame, y_train: pd.DataFrame, X_test: pd.DataFrame, y_test: pd.DataFrame):
-    # Xscaler = MinMaxScaler()
-    # yscaler = MinMaxScaler()
-    Xscaler = StandardScaler()
-    yscaler = StandardScaler()
-    X_train = Xscaler.fit_transform(X_train)
-    X_test = Xscaler.transform(X_test)
-    y_train, y_test = y_train.values.reshape(-1,
-                                             1), y_test.values.reshape(-1, 1)
-    y_train = yscaler.fit_transform(y_train)
-    y_test = yscaler.transform(y_test)
-    return X_train, y_train, X_test, y_test
-
-
-def load_data(csv_name):
-    csv_path = os.path.join(DATA_FOLDER, csv_name)
-    df = pd.read_csv(csv_path, sep=';')
-    df = date_to_float_col(df, replace=False)
-    df["depart_region"] = df["gare_depart"].apply(gare_region)
-    df["arrivee_region"] = df["gare_arrivee"].apply(gare_region)
-    df["depart_departement"] = df["gare_depart"].apply(gare_departement)
-    df["arrivee_departement"] = df["gare_arrivee"].apply(gare_departement)
-    # Remove gare_arrivee, gare_depart
-    df = df.drop(labels=["gare_arrivee", "gare_depart"], axis=1)
-    # One hot encoding
-    df = oneHotEncoding(df, "depart_region")
-    df = oneHotEncoding(df, "arrivee_region")
-    df = oneHotEncoding(df, "depart_departement")
-    df = oneHotEncoding(df, "arrivee_departement")
-    df = oneHotEncoding(df, "service")
-
-    # df["duree_moyenne"] = df["duree_moyenne"]-df["retard_moyen_arrivee"]x
-
-    xcols = ["duree_moyenne", "nb_train_prevu", "annee", "mois", "date"]
-
-    xcols_to_keep = [c for c in df.columns if c in xcols or c.startswith(
-        ("depart_region", "arrivee_region", "depart_departement", "arrivee_departement", "service"))]
-    ycols = ["retard_moyen_arrivee"]
-
-    df = df[xcols_to_keep+ycols]
-
-    X_train, y_train, X_test, y_test = train_test(df)
-
-    return scale(X_train, y_train, X_test, y_test)
-
-
 def get_model(dataset):
     x, y = dataset[0]
-    model = DenseNN(x.shape[0], 128, 512, 128)
+    model = DenseNN(x.shape[0], 128, 64)
     return model
 
 

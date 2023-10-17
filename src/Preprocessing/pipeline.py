@@ -93,8 +93,10 @@ def data_pipeline_2(csv_name, scaler="minmax"):
     df = pd.read_csv(csv_path, sep=';')
     X_train, y_train, X_test, y_test = data_pipeline_1(csv_name,scaler)
     X_train["retard_predit"] = X_train.apply(lasso)
-    X_train["retard_predit"] = X_test.apply(lasso)
-    return 
+    X_test["retard_predit"] = X_test.apply(lasso)
+    y_train,y_test=train_test2(df)
+    scaled = scale(X_train, y_train, X_test, y_test, scaler=scaler)
+    return scaled
 
 
 if __name__ == "__main__":

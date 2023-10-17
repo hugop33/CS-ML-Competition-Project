@@ -1,10 +1,10 @@
 import os
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 import pandas as pd
-
+from src.Train import *
 from config import *
 from .dates import date_to_float_col
-from .train_test_split import train_test
+from .train_test_split import train_test,train_test2
 from .one_hot_encoding import oneHotEncoding
 from .lieux_gares import *
 from .history_inference import infer_annulations
@@ -101,4 +101,5 @@ def data_pipeline_2(csv_name, scaler="minmax"):
 
 if __name__ == "__main__":
     X_train, y_train, X_test, y_test = data_pipeline_1(DATA_FILENAME)
+    X_train, y_train, X_test, y_test = data_pipeline_2(DATA_FILENAME)
     print("training shape", X_train.shape)

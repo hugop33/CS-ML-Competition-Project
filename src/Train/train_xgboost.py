@@ -12,7 +12,8 @@ from config import *
 
 def train(X_train, y_train, X_test, y_test, **kwargs):
     xgb = XGBRegressor(
-        **kwargs
+        **kwargs,
+        random_state=42
     )
 
     xgb.fit(X_train, y_train, early_stopping_rounds=100,

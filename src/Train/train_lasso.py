@@ -1,33 +1,43 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import Lasso
 from config import *
-import os
 
-from src.Preprocessing import data_pipeline_1, data_pipeline_2
-
-
-def load_data(csv_name):
-    csv_path = os.path.join(DATA_FOLDER, csv_name)
-    return pd.read_csv(csv_path, sep=';')
+from src.Preprocessing import *
 
 
-def lasso(df: pd.DataFrame):
+def lasso(X_train, y_train, X_test, y_test, **kwargs):
 
-    X_train, y_train, X_test, y_test = data_pipeline_1(DATA_FILENAME)
+    ls = Lasso()
+    ls.fit(X_train, y_train)
+    return ls
 
-    lasso = Lasso(alpha=0.1)
-    lasso.fit(X_train, y_train)
-    prediction = lasso.predict(X_test)
-    return lasso
+# def grid_search(X_train, y_train, **grid):
+#     gs_cv = GridSearchCV(
+#         Lasso(), grid
+#     )
+#     gs_cv.fit(X_train, y_train)
+#     print(gs_cv.best_params_)
+#     best_model = gs_cv.best_estimator_
+#     return best_model
 
+def plot_test(model, X_test, y_test):
+    y_pred = model.predict(X_test)
 
-def lasso_predict(model, X_test):
-    return model.predict(X_test)
+    mse = mean_squared_error(y_test, y_pred)
+    print("MSE :", mse)
 
+    x_ax = range(len(y_test))
+    plt.plot(x_ax, y_test, label="original")
+    plt.plot(x_ax, y_pred, label="predicted")
+    plt.title("Random Forest")
+    plt.legend()
+    plt.show()
 
 if __name__ == "__main__":
-    model = lasso("a")
-    X_train, y_train, X_test, y_test = data_pipeline_2(
-        DATA_FILENAME, lambda x: lasso_predict(model, x))
-    print("training shape", X_train.shape)
+    X_train, y_train, X_test, y_test = data_pipeline_1(DATA_FILENAME)
+    model = lasso(X_train, y_train, X_test, y_test)
+    plot_test(model, X_test, y_test)

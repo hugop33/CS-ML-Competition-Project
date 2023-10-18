@@ -20,10 +20,11 @@ from config import *
 class TGVDataset(Dataset):
     def __init__(self, filename, train=True):
         super().__init__()
-        self.X_train, self.y_train, self.X_test, self.y_test = data_pipeline(
-            filename, scaler="standard")
+        self.X_train, self.y_train, self.X_test, self.y_test = data_pipeline_1(
+            filename, scaler="minmax")
+        self.X_train, self.y_train, self.X_test, self.y_test = self.X_train.values, self.y_train.values, self.X_test.values, self.y_test.values
         self.X_train, self.y_train, self.X_test, self.y_test = torch.Tensor(self.X_train), torch.Tensor(
-            self.y_train), torch.Tensor(self.X_test), torch.Tensor(self.y_test)
+            self.y_train.reshape(-1, 1)), torch.Tensor(self.X_test), torch.Tensor(self.y_test.reshape(-1, 1))
         self.is_train = train
 
     def __getitem__(self, i):
@@ -153,7 +154,7 @@ def main():
                    DataLoader(eval_dataset, batch_size=128, shuffle=False))
     model = get_model(train_dataset)
     train(model, dataloaders, Adam, 1e-4,
-          MSELoss(), mean_squared_error, 500, 50, epoch_cp=50)
+          MSELoss(), mean_squared_error, 1000, 50, epoch_cp=50)
 
     plot_test(model, dataloaders[1], mean_squared_error)
 

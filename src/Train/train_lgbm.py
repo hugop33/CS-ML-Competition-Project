@@ -45,11 +45,12 @@ def plot_test(lgb, X_test, y_test):
     plt.show()
 
 
-def grid_search(X_train, y_train, **grid):
+def grid_search(X_train, y_train, X_test, y_test, **grid):
     gs_cv = GridSearchCV(
         LGBMRegressor(), grid, cv=5, refit=True, verbose=2
     )
-    gs_cv.fit(X_train, y_train)
+    gs_cv.fit(X_train, y_train, eval_set=[(X_train, y_train), (X_test, y_test)
+                                          ], callbacks=[early_stopping(stopping_rounds=100)])
     print(gs_cv.best_params_)
     best_model = gs_cv.best_estimator_
     return best_model
@@ -69,7 +70,7 @@ def main():
     #         "max_depth": [1, 3, 5, 10],
     #         "learning_rate": [0.001, 0.01, 0.05],
     #         "verbosity": [0]}
-    # lgb = grid_search(X_train, y_train,
+    # lgb = grid_search(X_train, y_train, X_test, y_test,
     #                   **grid
     #                   )
     feature_importances = pd.DataFrame(

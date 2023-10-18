@@ -7,16 +7,19 @@ from sklearn.ensemble import RandomForestRegressor
 from src.Preprocessing import *
 from config import *
 
+
 def random_forest(X_train, y_train, X_test, y_test, **kwargs):
 
     n_est = 100
-    rf = RandomForestRegressor(n_estimators=n_est, criterion="mse")
+    rf = RandomForestRegressor(
+        n_estimators=n_est, criterion="squared_error", random_state=42)
     rf.fit(X_train, y_train)
 
     # prediction = rf.predict(X_test)
     # mse = mean_squared_error(y_test, prediction)
     # print(f"MSE, nEstimators = {n_est} : {mse}")
     return rf
+
 
 def grid_search(X_train, y_train, **grid):
     gs_cv = GridSearchCV(
@@ -26,6 +29,7 @@ def grid_search(X_train, y_train, **grid):
     print(gs_cv.best_params_)
     best_model = gs_cv.best_estimator_
     return best_model
+
 
 def plot_test(model, X_test, y_test):
     y_pred = model.predict(X_test)
@@ -40,6 +44,7 @@ def plot_test(model, X_test, y_test):
     plt.legend()
     plt.show()
 
+
 def plot_test_2(model, X_test, y_test):
     y_pred = model.predict(X_test)
     nb_cols = len(y_test.columns)
@@ -50,11 +55,12 @@ def plot_test_2(model, X_test, y_test):
     print("MSE : ", MSE)
 
     x_ax = range(len(y_test))
-    
+
     for k in range(nb_cols):
         plt.subplot(nb_cols, 1, k+1)
-        plt.plot(x_ax, y_test[y_test.columns[k]], label=f"original {y_test.columns[k]}")
-        plt.plot(x_ax, y_pred[:,k], label=f"predicted {y_test.columns[k]}")
+        plt.plot(x_ax, y_test[y_test.columns[k]],
+                 label=f"original {y_test.columns[k]}")
+        plt.plot(x_ax, y_pred[:, k], label=f"predicted {y_test.columns[k]}")
         plt.title("Predicted and test instances, Random Forest")
         plt.legend()
     plt.show()
@@ -63,9 +69,10 @@ def plot_test_2(model, X_test, y_test):
 def main():
     X_train, y_train, X_test, y_test = data_pipeline_1(DATA_FILENAME)
     rf = random_forest(X_train, y_train, X_test, y_test)
-    X_train, y_train, X_test, y_test = data_pipeline_2(DATA_FILENAME, lambda x: rf.predict(x))
+    plot_test(rf, X_test, y_test)
+    X_train, y_train, X_test, y_test = data_pipeline_2(
+        DATA_FILENAME, lambda x: rf.predict(x))
     rf2 = random_forest(X_train, y_train, X_test, y_test)
-    
 
     # grid = {"n_estimators": [10, 50, 100, 150, 200],
     #         # "max_depth" : [],
@@ -77,6 +84,7 @@ def main():
     #                   )
 
     plot_test_2(rf2, X_test, y_test)
+
 
 if __name__ == "__main__":
     main()

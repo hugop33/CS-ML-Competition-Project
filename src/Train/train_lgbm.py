@@ -30,26 +30,34 @@ def lgbm_predict(model, X_test):
 
 
 def plot_test(lgb, X_test, y_test):
+    cols = y_test.columns
+    X_test, y_test = X_test.values, y_test.values
+    nb_cols = y_test.shape[1]
     y_pred = lgb.predict(X_test)
     score = lgb.score(X_test, y_test)
     print("Test score :", score)
 
-    mse = mean_squared_error(y_test, y_pred)
-    print("MSE :", mse)
+    mse_cols = []
+    for i in range(nb_cols):
+        mse_cols.append(mean_squared_error(y_test[:, i], y_pred[:, i]))
+    print("MSEs :", mse_cols)
 
     x_ax = range(len(y_test))
-    plt.plot(x_ax, y_test, label="original")
-    plt.plot(x_ax, y_pred, label="predicted")
-    plt.title("Predicted and target data for test instances")
-    plt.legend()
+    for i in range(nb_cols):
+        plt.subplot(nb_cols, 1, i+1)
+        plt.plot(x_ax, y_test[:, i], label=f"original {cols[i]}")
+        plt.plot(x_ax, y_pred[:, i], label=f"predicted {cols[i]}")
+        plt.title("Predicted and test instances, XGBoost")
+        plt.legend()
     plt.show()
 
 
-def grid_search(X_train, y_train, **grid):
+def grid_search(X_train, y_train, X_test, y_test, **grid):
     gs_cv = GridSearchCV(
         LGBMRegressor(), grid, cv=5, refit=True, verbose=2
     )
-    gs_cv.fit(X_train, y_train)
+    gs_cv.fit(X_train, y_train, eval_set=[(X_train, y_train), (X_test, y_test)
+                                          ], callbacks=[early_stopping(stopping_rounds=100)])
     print(gs_cv.best_params_)
     best_model = gs_cv.best_estimator_
     return best_model
@@ -69,14 +77,19 @@ def main():
     #         "max_depth": [1, 3, 5, 10],
     #         "learning_rate": [0.001, 0.01, 0.05],
     #         "verbosity": [0]}
-    # lgb = grid_search(X_train, y_train,
+    # lgb = grid_search(X_train, y_train, X_test, y_test,
     #                   **grid
     #                   )
-    feature_importances = pd.DataFrame(
-        lgb.feature_importances_, index=X_train.columns, columns=['importance']).sort_values('importance', ascending=False)
-    print(feature_importances)
+    X_train, y_train, X_test, y_test = data_pipeline_2(
+        DATA_FILENAME, lambda x: lgb.predict(x))
+    lgb2 = train(X_train, y_train, X_test, y_test,
+                 n_estimators=10000,
+                 max_depth=2,
+                 learning_rate=0.01,
+                 verbosity=2
+                 )
 
-    plot_test(lgb, X_test, y_test)
+    plot_test(lgb2, X_test, y_test)
 
 
 if __name__ == "__main__":

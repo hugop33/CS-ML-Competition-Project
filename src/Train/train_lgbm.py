@@ -53,7 +53,7 @@ def grid_search(X_train, y_train, **grid):
 
 def main():
     # Chargement des données
-    X_train, y_train, X_test, y_test = data_pipeline(DATA_FILENAME)
+    X_train, y_train, X_test, y_test = data_pipeline_1(DATA_FILENAME)
 
     lgb = train(X_train, y_train, X_test, y_test,
                 n_estimators=10000,

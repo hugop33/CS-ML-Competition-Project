@@ -31,10 +31,12 @@ def predictor(model, X_test):
 
 
 def plot_test(xgb, X_test, y_test):
+    y_test = y_test if isinstance(
+        y_test, pd.DataFrame) else pd.DataFrame(y_test)
     cols = y_test.columns
     X_test, y_test = X_test.values, y_test.values
     nb_cols = y_test.shape[1]
-    y_pred = xgb.predict(X_test)
+    y_pred = xgb.predict(X_test).reshape(-1, nb_cols)
     score = xgb.score(X_test, y_test)
     print("Test score :", score)
 
@@ -68,7 +70,8 @@ def grid_search(X_train, y_train, X_test, y_test, **grid):
 
 def main():
     # Chargement des données
-    X_train, y_train, X_test, y_test = data_pipeline_1(DATA_FILENAME)
+    X_train, y_train, X_test, y_test = data_pipeline_1(
+        DATA_FILENAME)
 
     xgb = train(X_train, y_train, X_test, y_test,
                 n_estimators=10000,
@@ -76,6 +79,7 @@ def main():
                 learning_rate=0.01,
                 verbosity=2
                 )
+    plot_test(xgb, X_test, y_test)
     # grid = {"n_estimators": [500, 1000, 1500, 2000],
     #         "max_depth": [1, 3, 5, 10],
     #         "learning_rate": [0.001, 0.01, 0.05]

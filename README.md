@@ -1,5 +1,3 @@
-Voici le README réformaté :
-
 markdown
 Copy code
 # Competition TGV

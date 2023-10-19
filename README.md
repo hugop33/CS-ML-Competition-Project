@@ -1,92 +1,79 @@
 # Competition TGV
 
+## Introduction
 
+Le projet "Competition TGV" vise à prédire les retards de train à la SNCF et leurs causes.
 
-## Getting started
+## Structure du projet
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+### Data_Visualisation
+Contient des scripts ou des notebooks pour la visualisation des données.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+* **data_visualisation.py** : 
+  - Ce script se concentre sur la visualisation des données associées aux annulations de TGV.
+  - Il contient une fonction `nombre_annulations_mensuel` qui prend en entrée un fichier CSV. Cette fonction lit le fichier pour obtenir un dataframe, transforme les dates en valeurs numériques flottantes, calcule le nombre moyen d'annulations par mois pour chaque année, et trace un graphique montrant ces moyennes.
 
-## Add your files
+### Preprocessing
+Contient des scripts ou des fonctions pour la préparation et la transformation des données avant l'entraînement.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+* **dates.py** :
+  - Contient des fonctions liées à la manipulation et à la conversion de dates.
+  - La fonction `date_to_float_col` convertit les dates au format 'yyyy-mm' en deux colonnes flottantes, 'annee' et 'mois'.
+  
+* **history_inference.py** :
+  - Contient des fonctions pour inférer des informations basées sur l'historique des données.
+  - La fonction `infer_annulations` utilise l'historique pour estimer le nombre d'annulations pour un mois donné.
 
-```
-cd existing_repo
-git remote add origin https://gitlab-student.centralesupelec.fr/aymeric.palaric/Competition-TGV.git
-git branch -M main
-git push -uf origin main
-```
+* **lieux_gares.py** :
+  - Contient un dictionnaire avec des informations sur différentes gares, notamment leur région et leur département.
 
-## Integrate with your tools
+* **one_hot_encoding.py** :
+  - Contient une fonction pour effectuer du "one hot encoding" sur un dataframe pour une colonne spécifique.
+  
+* **pipeline.py** :
+  - Contient des fonctions qui composent le pipeline de prétraitement des données.
+  - La fonction `scale` met à l'échelle les données en utilisant soit `MinMaxScaler` soit `StandardScaler`.
 
-- [ ] [Set up project integrations](https://gitlab-student.centralesupelec.fr/aymeric.palaric/Competition-TGV/-/settings/integrations)
+* **train_test_split.py** :
+  - Contient des fonctions pour diviser un dataframe en ensembles d'entraînement et de test.
+  - La fonction `train_test` divise les données en fonction des années, en utilisant les données de 2018 à 2022 pour l'entraînement et les données de 2023 pour le test.
 
-## Collaborate with your team
+### Train
+Dossier destiné à l'entraînement des modèles.
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+* **train_lasso.py** :
+  - Se concentre sur l'entraînement d'un modèle de régression Lasso.
+  - La fonction principale prépare les données et entraîne un modèle Lasso sur les données d'entraînement.
 
-## Test and Deploy
+* **train_lgbm.py** :
+  - Se concentre sur l'entraînement d'un modèle LightGBM.
+  - La fonction principale prépare les données et entraîne un modèle LightGBM sur les données d'entraînement.
 
-Use the built-in continuous integration in GitLab.
+* **train_nn.py** :
+  - Se concentre sur l'entraînement d'un réseau de neurones en utilisant PyTorch.
+  - Contient une classe `TGVDataset` pour faciliter le chargement et la manipulation des données.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+* **train_random_forest.py** :
+  - Se concentre sur l'entraînement d'un modèle de forêt aléatoire.
+  - La fonction principale instancie et entraîne un modèle de forêt aléatoire sur les données d'entraînement.
 
-***
+* **train_xgboost.py** :
+  - Se concentre sur l'entraînement d'un modèle XGBoost.
+  - La fonction principale instancie et entraîne un modèle XGBoost sur les données d'entraînement, avec un arrêt prématuré basé sur la performance de validation.
 
-# Editing this README
+### Evaluation
+Contient des scripts ou des fonctions pour évaluer les performances des modèles entraînés.
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+* **eval_lasso.py** :
+  - Actuellement, ce script est vide. Il est prévu pour contenir des fonctions ou des procédures d'évaluation associées à un modèle Lasso.
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+* **eval_xgboost.py** :
+  - Actuellement, ce script est vide. Il est prévu pour contenir des fonctions ou des procédures d'évaluation associées à un modèle XGBoost.
 
-## Name
-Choose a self-explaining name for your project.
+## Installation et dépendances
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+1. Clonez ce dépôt dans votre environnement local.
+2. Installez les dépendances nécessaires en exécutant la commande suivante :
+   ```bash
+   pip install -r requirements.txt
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.

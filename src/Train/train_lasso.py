@@ -33,7 +33,7 @@ def plot_test(model, X_test, y_test):
     x_ax = range(len(y_test))
     plt.plot(x_ax, y_test, label="original")
     plt.plot(x_ax, y_pred, label="predicted")
-    plt.title("Random Forest")
+    plt.title("Lasso")
     plt.legend()
     plt.show()
 

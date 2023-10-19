@@ -65,9 +65,9 @@ def data_pipeline_1(csv_name, scaler="minmax"):
 
     df["cities"] = df["gare_depart"] + df["gare_arrivee"].apply(
         lambda x: "|" + x)
-    distance_mapping = distance_map(STATIONS_PATH, df["cities"].unique())
-    df["distances_km"] = df["cities"].apply(
-        lambda x: distance_mapping[(x.split("|")[0], x.split("|")[1])])
+    # distance_mapping = distance_map(STATIONS_PATH, df["cities"].unique())
+    # df["distances_km"] = df["cities"].apply(
+    #     lambda x: distance_mapping[(x.split("|")[0], x.split("|")[1])])
     # Remove gare_arrivee, gare_depart
     df = df.drop(labels=["gare_arrivee", "gare_depart", "cities"], axis=1)
     # One hot encoding
@@ -80,7 +80,7 @@ def data_pipeline_1(csv_name, scaler="minmax"):
     # df["duree_moyenne"] = df["duree_moyenne"]-df["retard_moyen_arrivee"]x
 
     xcols = ["duree_moyenne", "nb_train_prevu",
-             "annee", "mois", "date", "distances_km", "annulations_mois"]
+             "annee", "mois", "date", "annulations_mois"]
 
     xcols_to_keep = [c for c in df.columns if c in xcols or c.startswith(
         ("depart_region", "arrivee_region", "depart_departement", "arrivee_departement", "service"))]

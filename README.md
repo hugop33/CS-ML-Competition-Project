@@ -45,6 +45,10 @@ Dossier destiné à l'entraînement des modèles.
   - Se concentre sur l'entraînement d'un modèle de régression Lasso.
   - La fonction principale prépare les données et entraîne un modèle Lasso sur les données d'entraînement.
 
+* **train_svm.py** :
+  - Se concentre sur l'entraînement d'un modèle de Support Vector Regression.
+  - La fonction principale prépare les données et entraîne un modèle SVR sur les données d'entraînement.
+  
 * **train_lgbm.py** :
   - Se concentre sur l'entraînement d'un modèle LightGBM.
   - La fonction principale prépare les données et entraîne un modèle LightGBM sur les données d'entraînement.

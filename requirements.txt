@@ -1,3 +1,6 @@
 xgboost == 2.0.0
 scikit-learn == 1.2.1
 lightgbm == 4.1.0
+geopy == 2.4.0
+torch == 2.0.0
+torchinfo == 1.7.2

@@ -5,6 +5,7 @@
 *.csv
 *.png
 *.jpg
+*.json
 
 # pycache
 __pycache__/
@@ -12,6 +13,8 @@ __pycache__/
 # ipython
 .ipynb_checkpoints/
 
+# MacOS
+.DS_Store
 
 # model weights (torch, sklearn, etc.)
 *.pt

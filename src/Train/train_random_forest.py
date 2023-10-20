@@ -9,7 +9,21 @@ from config import *
 
 
 def random_forest(X_train, y_train, X_test, y_test, **kwargs):
+    """
+    Trains a RandomForestRegressor model
 
+    Args:
+    -----
+        `X_train` (pd.DataFrame): training data
+        `y_train` (pd.DataFrame): training labels
+        `X_test` (pd.DataFrame): testing data
+        `y_test` (pd.DataFrame): testing labels
+        `**kwargs`: arguments to pass to the RandomForestRegressor model
+
+    Returns:
+    --------
+        `rf` (RandomForestRegressor): trained RandomForestRegressor model
+    """
     n_est = 100
     rf = RandomForestRegressor(
         n_estimators=n_est, criterion="squared_error", random_state=42)
@@ -22,6 +36,19 @@ def random_forest(X_train, y_train, X_test, y_test, **kwargs):
 
 
 def grid_search(X_train, y_train, **grid):
+    """
+    Performs a grid search on the RandomForestRegressor model
+
+    Args:
+    -----
+        `X_train` (pd.DataFrame): training data
+        `y_train` (pd.DataFrame): training labels
+        `**grid`: grid of parameters to test
+
+    Returns:
+    --------
+        `best_model` (RandomForestRegressor): best RandomForestRegressor model
+    """
     gs_cv = GridSearchCV(
         RandomForestRegressor(), grid, cv=5, refit=True, verbose=2
     )
@@ -32,6 +59,15 @@ def grid_search(X_train, y_train, **grid):
 
 
 def plot_test(model, X_test, y_test):
+    """
+    Plots the predictions of the model on the test set for phase 1
+
+    Args:
+    -----
+        `model` (RandomForestRegressor): trained RandomForestRegressor model
+        `X_test` (pd.DataFrame): testing data
+        `y_test` (pd.DataFrame): testing labels
+    """
     y_pred = model.predict(X_test)
 
     mse = mean_squared_error(y_test, y_pred)
@@ -46,6 +82,15 @@ def plot_test(model, X_test, y_test):
 
 
 def plot_test_2(model, X_test, y_test):
+    """
+    Plots the predictions of the model on the test set for phase 2
+
+    Args:
+    -----
+        `model` (RandomForestRegressor): trained RandomForestRegressor model
+        `X_test` (pd.DataFrame): testing data
+        `y_test` (pd.DataFrame): testing labels
+    """
     y_pred = model.predict(X_test)
     nb_cols = len(y_test.columns)
     MSE = []

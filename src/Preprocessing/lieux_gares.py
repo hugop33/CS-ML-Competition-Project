@@ -255,14 +255,47 @@ INTERNATIONAL_COORD = {
 
 
 def gare_departement(gare):
+    """
+    Renvoie le département de la gare passée en paramètre.
+
+    Args:
+    -----
+        `gare` (str): nom de la gare
+
+    Returns:
+    --------
+        `departement` (str): nom du département
+    """
     return GARES[gare]["departement"]
 
 
 def gare_region(gare):
+    """
+    Renvoie la région de la gare passée en paramètre.
+
+    Args:
+    -----
+        `gare` (str): nom de la gare
+
+    Returns:
+    --------
+        `region` (str): nom de la région
+    """
     return GARES[gare]["region"]
 
 
 def city_name(gare_name):
+    """
+    Renvoie un nom plus concis pour la ville de la gare passée en paramètre.
+
+    Args:
+    -----
+        `gare_name` (str): nom de la gare
+
+    Returns:
+    --------
+        `city` (str): nom de la ville
+    """
     i = 0
     thresh = 4
     city = []
@@ -273,7 +306,19 @@ def city_name(gare_name):
     return "-".join(city)
 
 
-def distance_map(city_csv_path, cities):
+def distance_map(city_csv_path: str, cities):
+    """
+    Calcule la distance entre les villes passées en paramètre.
+
+    Args:
+    -----
+        `city_csv_path` (str): chemin vers le fichier csv contenant les données sur les villes
+        `cities` (iterable): liste de noms de villes
+
+    Returns:
+    --------
+        `mapping` (dict): dictionnaire contenant les distances entre les villes
+    """
     city_df = pd.read_csv(city_csv_path, sep=";").dropna(
         subset=["latitude", "longitude"])
     mapping = {}

@@ -80,7 +80,7 @@ def data_pipeline_1(csv_name, scaler="minmax"):
     # df["duree_moyenne"] = df["duree_moyenne"]-df["retard_moyen_arrivee"]x
 
     xcols = ["duree_moyenne", "nb_train_prevu",
-             "annee", "mois", "date", "distances_km", "annulations_mois"]
+             "annee", "mois", "distances_km", "date", "annulations_mois"]
 
     xcols_to_keep = [c for c in df.columns if c in xcols or c.startswith(
         ("depart_region", "arrivee_region", "depart_departement", "arrivee_departement", "service"))]

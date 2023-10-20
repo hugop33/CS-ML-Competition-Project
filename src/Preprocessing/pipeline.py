@@ -13,17 +13,20 @@ def scale(X_train: pd.DataFrame, y_train: pd.DataFrame, X_test: pd.DataFrame, y_
     """
     Scales the data using either MinMaxScaler or StandardScaler
 
-    Input:
-        - X_train: training data
-        - y_train: training target
-        - X_test: testing data
-        - y_test: testing target
-        - scaler: either "minmax" or "standard"
-    Output:
-        - X_train: scaled training data, pd.DataFrame
-        - y_train: scaled training target, pd.DataFrame
-        - X_test: scaled testing data, pd.DataFrame
-        - y_test: scaled testing target, pd.DataFrame
+    Args:
+    -----
+        `X_train` (pd.DataFrame): training data
+        `y_train` (pd.DataFrame): training labels
+        `X_test` (pd.DataFrame): testing data
+        `y_test` (pd.DataFrame): testing labels
+        `scaler` (str): scaler to use, either "minmax" or "standard"
+
+    Returns:
+    --------
+        `X_train` (pd.DataFrame): scaled training data
+        `y_train` (pd.DataFrame): scaled training labels
+        `X_test` (pd.DataFrame): scaled testing data
+        `y_test` (pd.DataFrame): scaled testing labels
     """
     if scaler == "minmax":
         Xscaler = MinMaxScaler()
@@ -54,6 +57,18 @@ def scale(X_train: pd.DataFrame, y_train: pd.DataFrame, X_test: pd.DataFrame, y_
 
 
 def data_pipeline_1(csv_name, scaler="minmax"):
+    """
+    Pipeline for data preprocessing for part 1 of the project: prediction of the average delay of a train line.
+
+    Args:
+    -----
+        `csv_name` (str): name of the csv file containing the data
+        `scaler` (str): scaler to use, either "minmax" or "standard"
+
+    Returns:
+    --------
+        `scaled` (tuple): tuple containing the scaled training and testing data and labels
+    """
     csv_path = os.path.join(DATA_FOLDER, csv_name)
     df = pd.read_csv(csv_path, sep=';')
     df = date_to_float_col(df, replace=False)
@@ -95,6 +110,19 @@ def data_pipeline_1(csv_name, scaler="minmax"):
 
 
 def data_pipeline_2(csv_name, predictor, scaler="minmax"):
+    """
+    Pipeline for data preprocessing for part 2 of the project: prediction of the percentage of causes
+
+    Args:
+    -----
+        `csv_name` (str): name of the csv file containing the data
+        `predictor` (callable): prediction method for the model used in phase 1
+        `scaler` (str): scaler to use, either "minmax" or "standard"
+
+    Returns:
+    --------
+        `scaled` (tuple): tuple containing the scaled training and testing data and labels
+    """
     csv_path = os.path.join(DATA_FOLDER, csv_name)
     df = pd.read_csv(csv_path, sep=';')
     X_train, y_train, X_test, y_test = data_pipeline_1(csv_name, scaler)

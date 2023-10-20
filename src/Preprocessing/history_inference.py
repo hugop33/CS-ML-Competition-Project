@@ -9,6 +9,14 @@ def infer_annulations(df: pd.DataFrame):
 
     Example: For a certain train line (station1 to station2)
     If: December 2018 has 40 annulations, December 2019 35, December 2020 30, December 2021 40, December 2022 35, then all rows with that (station1 to station2) line and December month will get the value of 36.
+
+    Args:
+    -----
+        `df` (pd.DataFrame): dataframe contenant les colonnes 'annee', 'mois'
+
+    Returns:
+    --------
+        `df` (pd.DataFrame): dataframe avec une nouvelle colonne 'annulations_mois'
     """
     year_thresh = 2023
 

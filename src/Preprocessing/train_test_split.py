@@ -5,9 +5,18 @@ import numpy as np
 def train_test(df: pd.DataFrame):
     '''
     Prend un dataframe en entrée
-    Sépare le dataframe en train [2018 - 2022] et test [2023] set
+    Sépare le dataframe en train [2018 - 2022] et test [2023] set pour la phase 1
 
-    Output : X_train, y_train, X_test, y_test
+    Args:
+    -----
+        `df` (pd.DataFrame): dataframe contenant les données
+
+    Returns:
+    --------
+        `X_train` (pd.DataFrame): dataframe contenant les données d'entrainement
+        `y_train` (pd.DataFrame): dataframe contenant les labels d'entrainement
+        `X_test` (pd.DataFrame): dataframe contenant les données de test
+        `y_test` (pd.DataFrame): dataframe contenant les labels de test
     '''
     assert 'date' in df.columns
     list_months = list(set(df["date"]))
@@ -33,9 +42,18 @@ def train_test(df: pd.DataFrame):
 def train_test2(df: pd.DataFrame):
     '''
     Prend un dataframe en entrée
-    Sépare le dataframe en train [2018 - 2022] et test [2023] set
+    Sépare le dataframe en train [2018 - 2022] et test [2023] set pour la phase 2
 
-    Output : X_train, y_train, X_test, y_test
+    Args:
+    -----
+        `df` (pd.DataFrame): dataframe contenant les données
+
+    Returns:
+    --------
+        `X_train` (pd.DataFrame): dataframe contenant les données d'entrainement
+        `y_train` (pd.DataFrame): dataframe contenant les labels d'entrainement
+        `X_test` (pd.DataFrame): dataframe contenant les données de test
+        `y_test` (pd.DataFrame): dataframe contenant les labels de test
     '''
     assert 'date' in df.columns
     list_months = list(set(df["date"]))

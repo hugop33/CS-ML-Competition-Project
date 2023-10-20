@@ -11,6 +11,21 @@ from config import *
 
 
 def train(X_train, y_train, X_test, y_test, **kwargs):
+    """
+    Trains a XGBoost model
+
+    Args:
+    -----
+        `X_train` (pd.DataFrame): training data
+        `y_train` (pd.DataFrame): training labels
+        `X_test` (pd.DataFrame): testing data
+        `y_test` (pd.DataFrame): testing labels
+        `**kwargs`: arguments to pass to the XGBoost model
+
+    Returns:
+    --------
+        `xgb` (XGBRegressor): trained XGBoost model
+    """
     xgb = XGBRegressor(
         **kwargs,
         random_state=42
@@ -27,10 +42,32 @@ def train(X_train, y_train, X_test, y_test, **kwargs):
 
 
 def predictor(model, X_test):
+    """
+    Predicts the labels of the test set
+    (Only used for the second phase's data pipeline)
+
+    Args:
+    -----
+        `model` (XGBRegressor): trained XGBoost model
+        `X_test` (pd.DataFrame): testing data
+
+    Returns:
+    --------
+        `y_pred` (np.array): predictions of the model on the test set
+    """
     return model.predict(X_test)
 
 
 def plot_test(xgb, X_test, y_test):
+    """
+    Plots the predictions of the model on the test set
+
+    Args:
+    -----
+        `xgb` (XGBRegressor): trained XGBoost model
+        `X_test` (pd.DataFrame): testing data
+        `y_test` (pd.DataFrame): testing labels
+    """
     y_test = y_test if isinstance(
         y_test, pd.DataFrame) else pd.DataFrame(y_test)
     cols = y_test.columns
@@ -56,6 +93,21 @@ def plot_test(xgb, X_test, y_test):
 
 
 def grid_search(X_train, y_train, X_test, y_test, **grid):
+    """
+    Performs a grid search on the XGBoost model
+
+    Args:
+    -----
+        `X_train` (pd.DataFrame): training data
+        `y_train` (pd.DataFrame): training labels
+        `X_test` (pd.DataFrame): testing data
+        `y_test` (pd.DataFrame): testing labels
+        `**grid`: grid of parameters to test
+
+    Returns:
+    --------
+        `best_model` (XGBRegressor): best XGBoost model
+    """
     gs_cv = GridSearchCV(
         XGBRegressor(random_state=42), grid, cv=3, refit=True, verbose=2
     )

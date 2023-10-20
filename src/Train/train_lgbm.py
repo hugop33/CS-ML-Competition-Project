@@ -11,6 +11,21 @@ from config import *
 
 
 def train(X_train, y_train, X_test, y_test, **kwargs):
+    """
+    Trains a LGBMRegressor model
+
+    Args:
+    -----
+        `X_train` (pd.DataFrame): training data
+        `y_train` (pd.DataFrame): training labels
+        `X_test` (pd.DataFrame): testing data
+        `y_test` (pd.DataFrame): testing labels
+        `**kwargs`: arguments to pass to the LGBMRegressor model
+
+    Returns:
+    --------
+        `lgb` (LGBMRegressor): trained LGBMRegressor model
+    """
     lgb = LGBMRegressor(
         **kwargs,
         random_state=42
@@ -26,10 +41,32 @@ def train(X_train, y_train, X_test, y_test, **kwargs):
 
 
 def lgbm_predict(model, X_test):
+    """
+    Predicts the labels of the test set using the trained model
+    (Only used as a helper function for data_pipeline_2)
+
+    Args:
+    -----
+        `model` (LGBMRegressor): trained LGBMRegressor model
+        `X_test` (pd.DataFrame): testing data
+
+    Returns:
+    --------
+        `y_pred` (pd.DataFrame): predicted labels
+    """
     return model.predict(X_test)
 
 
 def plot_test(lgb, X_test, y_test):
+    """
+    Plots the predictions of the model on the test set
+
+    Args:
+    -----
+        `lgb` (LGBMRegressor): trained LGBMRegressor model
+        `X_test` (pd.DataFrame): testing data
+        `y_test` (pd.DataFrame): testing labels
+    """
     cols = y_test.columns
     X_test, y_test = X_test.values, y_test.values
     nb_cols = y_test.shape[1]
@@ -53,6 +90,21 @@ def plot_test(lgb, X_test, y_test):
 
 
 def grid_search(X_train, y_train, X_test, y_test, **grid):
+    """
+    Performs a grid search on the LGBMRegressor model
+
+    Args:
+    -----
+        `X_train` (pd.DataFrame): training data
+        `y_train` (pd.DataFrame): training labels
+        `X_test` (pd.DataFrame): testing data
+        `y_test` (pd.DataFrame): testing labels
+        `**grid`: grid of parameters to test
+
+    Returns:
+    --------
+        `best_model` (LGBMRegressor): best model found by the grid search
+    """
     gs_cv = GridSearchCV(
         LGBMRegressor(), grid, cv=5, refit=True, verbose=2
     )

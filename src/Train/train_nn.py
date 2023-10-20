@@ -1,14 +1,10 @@
 import torch
 import torchinfo as ti
 from torch import nn
-from torch.nn import Module, Linear, ReLU, Sequential, MSELoss, Dropout, Tanh
+from torch.nn import Module, Linear, Sequential, MSELoss, Dropout
 from torch.optim import Adam
 from torch.utils.data import DataLoader, Dataset
-import pandas as pd
-import numpy as np
-import os
 from time import time
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.metrics import mean_squared_error
 
 import matplotlib.pyplot as plt
@@ -18,6 +14,28 @@ from config import *
 
 
 class TGVDataset(Dataset):
+    """
+    Custom dataset for the TGV data
+
+    Args:
+    -----
+        `filename` (str): path to the csv file containing the data
+        `train` (bool): whether to return the training or testing set
+
+    Attributes:
+    -----------
+        `X_train` (pd.DataFrame): training data
+        `y_train` (pd.DataFrame): training labels
+        `X_test` (pd.DataFrame): testing data
+        `y_test` (pd.DataFrame): testing labels
+        `is_train` (bool): whether to return the training or testing set
+
+    Methods:
+    --------
+        `__getitem__(self, i)`: returns the i-th element of the dataset
+        `__len__(self)`: returns the length of the dataset
+    """
+
     def __init__(self, filename, train=True):
         super().__init__()
         self.X_train, self.y_train, self.X_test, self.y_test = data_pipeline_1(
@@ -42,6 +60,25 @@ class TGVDataset(Dataset):
 
 
 class DenseNN(Module):
+    """
+    Dense neural network
+
+    Args:
+    -----
+        `input_size` (int): size of the input layer
+        `*hidden_sizes` (int): sizes of the hidden layers
+
+    Attributes:
+    -----------
+        `sizes` (list): sizes of the layers
+        `sequs` (list): list of the layers of the network
+
+    Methods:
+    --------
+        `forward(self, X)`: forward pass of the network
+        `info(self)`: prints the summary of the network
+    """
+
     def __init__(self, input_size, *hidden_sizes):
         super().__init__()
         self.sizes = [input_size, *hidden_sizes]
@@ -60,17 +97,59 @@ class DenseNN(Module):
 
 
 def get_model(dataset):
+    """
+    Returns the model to use for the given dataset
+
+    Args:
+    -----
+        `dataset` (Dataset): dataset to use
+
+    Returns:
+    --------
+        `model` (Module): model to use
+    """
     x, y = dataset[0]
     model = DenseNN(x.shape[0], 128, 64)
     return model
 
 
 def train(model: Module, dataloaders, optimizer, lr, loss_fn, scoring_fn, n_epochs, step_cp=30, epoch_cp=5):
+    """
+    Trains the model
+
+    Args:
+    -----
+        `model` (Module): model to train
+        `dataloaders` (tuple): tuple of the training and testing dataloaders
+        `optimizer` (Optimizer): optimizer to use
+        `lr` (float): learning rate
+        `loss_fn` (Loss): loss function to use
+        `scoring_fn` (function): scoring function to use
+        `n_epochs` (int): number of epochs to train the model
+        `step_cp` (int): number of batches between each checkpoint
+        `epoch_cp` (int): number of epochs between each checkpoint
+
+    Returns:
+    --------
+        `model` (Module): trained model
+    """
     device = torch.device("cpu")
     train_data, eval_data = dataloaders
     optimizer = optimizer(model.parameters(), lr=lr)
 
     def epoch_train(epoch):
+        """
+        Trains the model on the training set for one epoch
+
+        Args:
+        -----
+            `epoch` (int): current epoch
+
+        Returns:
+        --------
+            `total_loss` (float): average loss on the training set
+            `total_score` (float): average score on the training set
+        """
         model.train()
         model.to(device)
         total_loss = 0
@@ -97,6 +176,14 @@ def train(model: Module, dataloaders, optimizer, lr, loss_fn, scoring_fn, n_epoc
         return total_loss/len(train_data), total_score/len(train_data)
 
     def epoch_test():
+        """
+        Evaluates the model on the testing set
+
+        Returns:
+        --------
+            `total_loss` (float): average loss on the testing set
+            `total_score` (float): average score on the testing set
+        """
         model.eval()
         model.to(device)
         total_loss = 0
@@ -125,6 +212,15 @@ def train(model: Module, dataloaders, optimizer, lr, loss_fn, scoring_fn, n_epoc
 
 
 def plot_test(model, eval_data, scoring_fn):
+    """
+    Plots the predictions of the model on the testing set
+
+    Args:
+    -----
+        `model` (Module): trained model
+        `eval_data` (DataLoader): testing set
+        `scoring_fn` (function): scoring function to use
+    """
     device = torch.device("cpu")
     model.eval()
     model.to(device)

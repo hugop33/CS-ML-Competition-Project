@@ -26,7 +26,7 @@ def random_forest2(X_train, y_train, **kwargs):
         `rf` (RandomForestRegressor): trained RandomForestRegressor model
     """
 
-    rf = RandomForestRegressor(n_estimators=100)
+    rf = RandomForestRegressor(**kwargs)
     rf.fit(X_train, y_train)
 
     return rf
@@ -87,10 +87,10 @@ def plot_test_2(model, X_test, y_test):
 
 def main():
     X_train, y_train, X_test, y_test = data_pipeline_1(DATA_FILENAME)
-    rf = random_forest1(X_train, y_train)
+    rf = random_forest1(X_train, y_train, n_estimators=100, criterion="squared_error")
     X_train, y_train, X_test, y_test = data_pipeline_2(
         DATA_FILENAME, lambda x: rf.predict(x))
-    rf2 = random_forest2(X_train, y_train)
+    rf2 = random_forest2(X_train, y_train, n_estimators=100, criterion="squared_error")
 
     # grid = {"n_estimators": [10, 50, 100, 150, 200],
     #         # "max_depth" : [],

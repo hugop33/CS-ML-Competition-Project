@@ -10,7 +10,7 @@ from src.Preprocessing import *
 from config import *
 
 
-def train(X_train, y_train, X_test, y_test, **kwargs):
+def train1(X_train, y_train, X_test, y_test, **kwargs):
     """
     Trains a XGBoost model
 
@@ -58,37 +58,26 @@ def predictor(model, X_test):
     return model.predict(X_test)
 
 
-def plot_test(xgb, X_test, y_test):
+def plot_test1(model, X_test, y_test):
     """
-    Plots the predictions of the model on the test set
+    Plots the predictions of the model on the test set for phase 1
 
     Args:
     -----
-        `xgb` (XGBRegressor): trained XGBoost model
+        `model` (RandomForestRegressor): trained RandomForestRegressor model
         `X_test` (pd.DataFrame): testing data
         `y_test` (pd.DataFrame): testing labels
     """
-    y_test = y_test if isinstance(
-        y_test, pd.DataFrame) else pd.DataFrame(y_test)
-    cols = y_test.columns
-    X_test, y_test = X_test.values, y_test.values
-    nb_cols = y_test.shape[1]
-    y_pred = xgb.predict(X_test).reshape(-1, nb_cols)
-    score = xgb.score(X_test, y_test)
-    print("Test score :", score)
+    y_pred = model.predict(X_test)
 
-    mse_cols = []
-    for i in range(nb_cols):
-        mse_cols.append(mean_squared_error(y_test[:, i], y_pred[:, i]))
-    print("MSEs :", mse_cols)
+    mse = mean_squared_error(y_test, y_pred)
+    print("MSE :", mse)
 
     x_ax = range(len(y_test))
-    for i in range(nb_cols):
-        plt.subplot(nb_cols, 1, i+1)
-        plt.plot(x_ax, y_test[:, i], label=f"original {cols[i]}")
-        plt.plot(x_ax, y_pred[:, i], label=f"predicted {cols[i]}")
-        plt.title("Predicted and test instances, XGBoost")
-        plt.legend()
+    plt.plot(x_ax, y_test, label="original")
+    plt.plot(x_ax, y_pred, label="predicted")
+    plt.title(f"Random Forest (MSE = {round(mse, 5)})")
+    plt.legend()
     plt.show()
 
 
@@ -125,13 +114,12 @@ def main():
     X_train, y_train, X_test, y_test = data_pipeline_1(
         DATA_FILENAME)
 
-    xgb = train(X_train, y_train, X_test, y_test,
-                n_estimators=10000,
-                max_depth=2,
-                learning_rate=0.01,
-                verbosity=2
-                )
-    plot_test(xgb, X_test, y_test)
+    xgb = train1(X_train, y_train, X_test, y_test,
+                 n_estimators=10000,
+                 max_depth=2,
+                 learning_rate=0.01,
+                 verbosity=2
+                 )
     # grid = {"n_estimators": [500, 1000, 1500, 2000],
     #         "max_depth": [1, 3, 5, 10],
     #         "learning_rate": [0.001, 0.01, 0.05]
@@ -139,15 +127,7 @@ def main():
     # xgb = grid_search(X_train, y_train, X_test, y_test,
     #                   **grid
     #                   )
-    X_train, y_train, X_test, y_test = data_pipeline_2(
-        DATA_FILENAME, lambda x: xgb.predict(x))
-    xgb2 = train(X_train, y_train, X_test, y_test,
-                 n_estimators=10000,
-                 max_depth=2,
-                 learning_rate=0.01,
-                 verbosity=2
-                 )
-    plot_test(xgb2, X_test, y_test)
+    plot_test1(xgb, X_test, y_test)
 
 
 if __name__ == "__main__":

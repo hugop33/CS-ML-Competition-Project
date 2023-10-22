@@ -77,7 +77,7 @@ Contient des scripts ou des fonctions pour évaluer les performances des modèle
 ## Installation et dépendances
 
 1. Clonez ce dépôt dans votre environnement local.
-2. Le fichier `Makefile` regrope les lignes de commandes nécessaire pour lancer l'entraînement et visualiser les résultats
+2. Le fichier `Makefile` regroupe les lignes de commandes nécessaire pour lancer l'entraînement et visualiser les résultats
 * Installez les dépendances nécessaires en exécutant la commande suivante :
    ```bash
    make requirements

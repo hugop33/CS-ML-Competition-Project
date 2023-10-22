@@ -5,7 +5,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestRegressor
 
 from src.Preprocessing import *
-from .train_random_forest1 import *
+from src.Train.train_random_forest1 import random_forest1
 from config import *
 
 

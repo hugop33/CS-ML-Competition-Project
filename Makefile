@@ -1,32 +1,26 @@
-# Makefile for AapprAuto Project
+# Makefile for Apprentissage Automatique Project
 
 # Default target
 all: help
 
 # Update project dependencies
-requirement:
+requirements:
 	pip install --upgrade -r requirements.txt
 
-# Train the machine learning model
-train:
-	python src/train.py
+# Random forest pour la prédiction du retard (partie 1)
+retard:
+	python -m src.Train.train_random_forest1
 
-# Evaluate the machine learning model
-evaluate:
-	python src/evaluate.py
-
+# Random forest pour la prédiction des causes (partie 2)
+causes:
+	python -m src.Train.train_random_forest2
 
 # Display help message
 help:
-	@echo "Machine Learning Project Makefile"
+	@echo "Apprentissage Automatique Project Makefile"
 	@echo ""
 	@echo "Available targets:"
-	@echo "  venv      - Create a virtual environment"
-	@echo "  install   - Install project dependencies"
-	@echo "  update    - Update project dependencies"
-	@echo "  train     - Train the machine learning model"
-	@echo "  evaluate  - Evaluate the machine learning model"
-	@echo "  clean     - Clean up generated files and build artifacts"
-	@echo "  help      - Display this help message"
-
-.PHONY: venv install update train evaluate clean help
+	@echo "  requirement  - Install project libaries"
+	@echo "  retard       - Train the random forest model for the delay and plot the prediction result"
+	@echo "  causes       - Train the random forest model fro the causes and plot the prediction result"
+	@echo "  help         - Display this help message"

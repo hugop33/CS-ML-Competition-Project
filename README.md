@@ -77,7 +77,17 @@ Contient des scripts ou des fonctions pour évaluer les performances des modèle
 ## Installation et dépendances
 
 1. Clonez ce dépôt dans votre environnement local.
-2. Installez les dépendances nécessaires en exécutant la commande suivante :
+2. Le fichier `Makefile` regrope les lignes de commandes nécessaire pour lancer l'entraînement et visualiser les résultats
+* Installez les dépendances nécessaires en exécutant la commande suivante :
    ```bash
-   pip install -r requirements.txt
+   make requirements
+* Entraîner et visualiser la prédiction pour les retards (partie 1) :
+   ```bash
+   make retard
+* Entraîner et visualiser la prédiction pour les causes (partie 2) :
+   ```bash
+   make causes
+* Retrouver les lignes de commandes utiles au projet :
+   ```bash
+   make help
 
